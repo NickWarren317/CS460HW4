@@ -1,0 +1,6 @@
+[console_scripts]
+CS460HW4 = CS460HW4.CS460HW4:main
+
+[launch.frontend.launch_extension]
+launch_ros = launch_ros
+
