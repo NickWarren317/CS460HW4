@@ -119,7 +119,7 @@ class RandomWalk(Node):
         left_lidar_min = min(self.scan_cleaned[LEFT_SIDE_INDEX:LEFT_FRONT_INDEX])
         right_lidar_min = min(self.scan_cleaned[RIGHT_FRONT_INDEX:RIGHT_SIDE_INDEX])
         front_lidar_min = min(self.scan_cleaned[LEFT_FRONT_INDEX:RIGHT_FRONT_INDEX])
-        if self.count >= 65:
+        if self.count >= 60:
             self.count = 0
         if self.count >= 40:
             self.scanwall()
