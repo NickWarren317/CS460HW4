@@ -84,13 +84,6 @@ class RandomWalk(Node):
         position = msg2.pose.pose.position
         self.pose_saved = position     
 
-    def camera_callback(self, msg):
-        # Convert ROS image to OpenCV format
-        
-        # You can now process the image using OpenCV (e.g., for visualization or debugging)
-        #self.get_logger().info("Received camera image!")
-        cv2.waitKey(1)
-
     def april_tag_callback(self, msg):
         # Check if any AprilTags were detected
         self.get_logger().info(f"Detected {len(msg.detections)} AprilTags.")
@@ -99,11 +92,8 @@ class RandomWalk(Node):
                 tag_id = detection.id
                 if tag_id not in self.found_tags:
                     self.found_tags.append(tag_id)
+                    self.get_logger().info(f"New tag found, total of {len(self.found_tags)}, {self.found_tags}")
                 self.get_logger().info(f"Detected AprilTag with ID: {tag_id}")
-                
-                # Example: Stop the robot if a tag with a specific ID is detected
-                if tag_id == 1:  # Replace with your target tag ID
-                    self.stop_robot()
 
     def stop_robot(self):
         # Stop the robot when a specific tag is detected
