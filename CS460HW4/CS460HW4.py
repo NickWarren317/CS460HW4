@@ -42,6 +42,7 @@ class RandomWalk(Node):
 
         # Lidar and Odometry setup
         self.count = 0
+        self.found_tags = []
         self.scan_cleaned = []
         self.stall = False
         self.path = []
@@ -96,6 +97,8 @@ class RandomWalk(Node):
         if msg.detections:
             for detection in msg.detections:
                 tag_id = detection.id
+                if tag_id not in self.found_tags:
+                    self.found_tags.append(tag_id)
                 self.get_logger().info(f"Detected AprilTag with ID: {tag_id}")
                 
                 # Example: Stop the robot if a tag with a specific ID is detected
