@@ -1,3 +1,5 @@
 logs/
 *.log
 coords.txt
+install/
+build/
