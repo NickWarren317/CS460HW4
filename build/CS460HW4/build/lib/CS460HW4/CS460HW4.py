@@ -41,6 +41,7 @@ class RandomWalk(Node):
         )
 
         # Lidar and Odometry setup
+        self.count = 0
         self.scan_cleaned = []
         self.stall = False
         self.path = []
@@ -108,7 +109,9 @@ class RandomWalk(Node):
         self.publisher_.publish(self.cmd)
         self.get_logger().info("Robot stopped due to AprilTag detection!")
 
+
     def timer_callback(self):
+        self.count = self.count + 1
         if len(self.scan_cleaned) == 0:
             self.turtlebot_moving = False
             return
@@ -116,7 +119,8 @@ class RandomWalk(Node):
         left_lidar_min = min(self.scan_cleaned[LEFT_SIDE_INDEX:LEFT_FRONT_INDEX])
         right_lidar_min = min(self.scan_cleaned[RIGHT_FRONT_INDEX:RIGHT_SIDE_INDEX])
         front_lidar_min = min(self.scan_cleaned[LEFT_FRONT_INDEX:RIGHT_FRONT_INDEX])
-
+        if self.count >= 40:
+            self.scanwall()
         if self.find_wall:
             self.go_straight()
             if front_lidar_min < LIDAR_AVOID_DISTANCE:
@@ -170,6 +174,13 @@ class RandomWalk(Node):
         self.publisher_.publish(self.cmd)
         self.turtlebot_moving = True
 
+    def scanwall(self):
+        self.count = 0
+        self.bot_turning = True
+        self.cmd.linear.x - 0
+        self.cmd.angular.z = 5
+        self.publisher_.publish(self.cmd)
+        self.turtlebot_moving = True
 
 def main(args=None):
     rclpy.init(args=args)

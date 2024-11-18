@@ -41,6 +41,7 @@ class RandomWalk(Node):
         )
 
         # Lidar and Odometry setup
+        self.count = 0
         self.scan_cleaned = []
         self.stall = False
         self.path = []
@@ -108,7 +109,9 @@ class RandomWalk(Node):
         self.publisher_.publish(self.cmd)
         self.get_logger().info("Robot stopped due to AprilTag detection!")
 
+
     def timer_callback(self):
+        self.count = self.count + 1
         if len(self.scan_cleaned) == 0:
             self.turtlebot_moving = False
             return
@@ -116,44 +119,48 @@ class RandomWalk(Node):
         left_lidar_min = min(self.scan_cleaned[LEFT_SIDE_INDEX:LEFT_FRONT_INDEX])
         right_lidar_min = min(self.scan_cleaned[RIGHT_FRONT_INDEX:RIGHT_SIDE_INDEX])
         front_lidar_min = min(self.scan_cleaned[LEFT_FRONT_INDEX:RIGHT_FRONT_INDEX])
-
-        if self.find_wall:
-            self.go_straight()
-            if front_lidar_min < LIDAR_AVOID_DISTANCE:
-                self.last_wall_dist = right_lidar_min
-                self.find_wall = False
+        if self.count >= 65:
+            self.count = 0
+        if self.count >= 40:
+            self.scanwall()
         else:
-            if front_lidar_min < LIDAR_AVOID_DISTANCE:
-                self.bot_turning = False
-                if right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE and left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
-                    self.bot_turning = True
-                    self.cmd.linear.x = 0.25
-                    self.cmd.angular.z = 5.0
-                elif right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE:
-                    self.bot_turning = True
-                    self.cmd.linear.x = 0.5
-                    self.cmd.angular.z = 5.0
-                elif left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
-                    self.bot_turning = True
-                    self.cmd.linear.x = 0.5
-                    self.cmd.angular.z = -5.0
-                else:
-                    self.bot_turning = True
-                    self.cmd.linear.x = 0.5
-                    self.cmd.angular.z = 5.0
+            if self.find_wall:
+                self.go_straight()
+                if front_lidar_min < LIDAR_AVOID_DISTANCE:
+                    self.last_wall_dist = right_lidar_min
+                    self.find_wall = False
             else:
-                if right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE and left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
-                    self.go_straight()
-                elif right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE:
-                    self.go_straight()
-                elif left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
-                    self.bot_turning = True
-                    self.cmd.linear.x = 0.5
-                    self.cmd.angular.z = -5.0
+                if front_lidar_min < LIDAR_AVOID_DISTANCE:
+                    self.bot_turning = False
+                    if right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE and left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
+                        self.bot_turning = True
+                        self.cmd.linear.x = 0.25
+                        self.cmd.angular.z = 5.0
+                    elif right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE:
+                        self.bot_turning = True
+                        self.cmd.linear.x = 0.5
+                        self.cmd.angular.z = 5.0
+                    elif left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
+                        self.bot_turning = True
+                        self.cmd.linear.x = 0.5
+                        self.cmd.angular.z = -5.0
+                    else:
+                        self.bot_turning = True
+                        self.cmd.linear.x = 0.5
+                        self.cmd.angular.z = 5.0
                 else:
-                    self.bot_turning = True
-                    self.cmd.linear.x = 0.5
-                    self.cmd.angular.z = -5.0
+                    if right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE and left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
+                        self.go_straight()
+                    elif right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE:
+                        self.go_straight()
+                    elif left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
+                        self.bot_turning = True
+                        self.cmd.linear.x = 0.5
+                        self.cmd.angular.z = -5.0
+                    else:
+                        self.bot_turning = True
+                        self.cmd.linear.x = 0.5
+                        self.cmd.angular.z = -5.0
 
         self.publisher_.publish(self.cmd)
 
@@ -170,6 +177,12 @@ class RandomWalk(Node):
         self.publisher_.publish(self.cmd)
         self.turtlebot_moving = True
 
+    def scanwall(self):
+        self.bot_turning = True
+        self.cmd.linear.x = 0.0
+        self.cmd.angular.z = 2.0
+        self.publisher_.publish(self.cmd)
+        self.turtlebot_moving = True
 
 def main(args=None):
     rclpy.init(args=args)
