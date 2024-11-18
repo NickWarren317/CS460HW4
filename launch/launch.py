@@ -102,7 +102,29 @@ def generate_launch_description():
     rviz_config_dir = os.path.join(get_package_share_directory('CS460HW4'),
                                    'rviz', 'turtlebot3_apriltags.rviz')
 
-
+      # AprilTag node
+    apriltag_node = Node(
+        package='apriltag_ros',
+        executable='apriltag_node',
+        name='apriltag_detector',
+        output='screen',
+        parameters=[{
+            'camera_info_topic': '/TurtleBot3Burger/camera/camera_info',  # Camera calibration info
+            'image_topic': '/TurtleBot3Burger/camera/image_color',         # Camera image topic
+            'tag_family': 'tag36h11',                                       # Tag family (change if needed)
+            'frame_id': 'camera_link',                                     # Frame ID for detected tags
+            'use_sim_time': use_sim_time
+        }],
+        remappings=[('/image_rect', '/TurtleBot3Burger/camera/image_color'),  # Remap image topic
+                    ('/camera_info', '/TurtleBot3Burger/camera/camera_info')]  # Remap camera info topic
+    )
+    
+    apriltag_tf_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'apriltag_frame']  # Example transform (can be adjusted)
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -121,6 +143,9 @@ def generate_launch_description():
 
         robot_state_publisher,
         footprint_publisher,
+
+        apriltag_node,
+        apriltag_tf_publisher,
 
         turtlebot_driver,
 
