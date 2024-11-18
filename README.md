@@ -7,3 +7,9 @@
 <p> 6. open another terminal and run <strong> cd CS460HW4 </strong> <strong> source install/setup.bash </strong> <strong> ros2 run CS460HW4 CS460HW4 </strong></p>
 
 
+<h1> Algorithm 1.0 </h1>
+<p> Simple movement to keep a wall to the turtlebot's right side. This allows it to follow walls where april tags are most likely to be placed.
+However, the camera is front facing, therefore not a good angle to scan the tags. Therefore, the bot will periodically stop and do a full rotation to
+scan its surroundings for a tag. When one is detected, it is added to a list of found tags if not in the list already, then resumes wall following </p>
+
+
