@@ -109,21 +109,21 @@ def generate_launch_description():
         name='apriltag_detector',
         output='screen',
         parameters=[{
-            'camera_info_topic': '/TurtleBot3Burger/camera/camera_info',  # Camera calibration info
-            'image_topic': '/TurtleBot3Burger/camera/image_color',         # Camera image topic
-            'tag_family': 'tag36h11',                                       # Tag family (change if needed)
-            'frame_id': 'camera_link',                                     # Frame ID for detected tags
+            'camera_info_topic': '/TurtleBot3Burger/camera/camera_info',  
+            'image_topic': '/TurtleBot3Burger/camera/image_color',         
+            'tag_family': 'tag36h11',                                       
+            'frame_id': 'camera_link',                                    
             'use_sim_time': use_sim_time
         }],
-        remappings=[('/image_rect', '/TurtleBot3Burger/camera/image_color'),  # Remap image topic
-                    ('/camera_info', '/TurtleBot3Burger/camera/camera_info')]  # Remap camera info topic
+        remappings=[('/image_rect', '/TurtleBot3Burger/camera/image_color'),
+                    ('/camera_info', '/TurtleBot3Burger/camera/camera_info')] 
     )
     
     apriltag_tf_publisher = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'apriltag_frame']  # Example transform (can be adjusted)
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'apriltag_frame'] 
     )
 
     return LaunchDescription([
