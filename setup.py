@@ -7,7 +7,9 @@ data_files.append(('share/ament_index/resource_index/packages', ['resource/' + p
 data_files.append(('share/' + package_name + '/launch', ['launch/launch.py']))
 
 data_files.append(('share/' + package_name + '/worlds', [
-    'worlds/turtlebot3_apriltags.wbt', 
+    'worlds/maze.wbt', 
+    'worlds/tut.wbt',
+    'worlds/maze2.wbt'
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))
 

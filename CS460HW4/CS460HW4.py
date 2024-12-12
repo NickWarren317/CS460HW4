@@ -112,17 +112,12 @@ class RandomWalk(Node):
         left_lidar_min = min(self.scan_cleaned[LEFT_SIDE_INDEX:LEFT_FRONT_INDEX])
         right_lidar_min = min(self.scan_cleaned[RIGHT_FRONT_INDEX:RIGHT_SIDE_INDEX])
         front_lidar_min = min(self.scan_cleaned[LEFT_FRONT_INDEX:RIGHT_FRONT_INDEX])
-        if self.count >= 55:
-            self.count = 0
-        if self.count >= 40:
-            self.scanwall()
-        else:
-            if self.find_wall:
+        if self.find_wall:
                 self.go_straight()
                 if front_lidar_min < LIDAR_AVOID_DISTANCE:
                     self.last_wall_dist = right_lidar_min
                     self.find_wall = False
-            else:
+        else:
                 if front_lidar_min < LIDAR_AVOID_DISTANCE:
                     self.bot_turning = False
                     if right_lidar_min < LIDAR_RIGHT_TURN_DISTANCE and left_lidar_min < LIDAR_LEFT_TURN_DISTANCE:
@@ -173,7 +168,7 @@ class RandomWalk(Node):
     def scanwall(self):
         self.bot_turning = True
         self.cmd.linear.x = 0.0
-        self.cmd.angular.z = 2.0
+        self.cmd.angular.z = 0.5
         self.publisher_.publish(self.cmd)
         self.turtlebot_moving = True
 
@@ -186,6 +181,7 @@ def main(args=None):
     except KeyboardInterrupt:
         random_walk_node.get_logger().info("Shutting down...")
     finally:
+        random_walk_node.get_logger().info(f"Found {len(random_walk_node.found_tags)} AprilTage {random_walk_node.found_tags}")
         random_walk_node.destroy_node()
         rclpy.shutdown()
 
